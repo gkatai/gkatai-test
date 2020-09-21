@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Posts from "./Posts";
 import Post from "./Post";
+import Albums from "./Albums";
+import Album from "./Album";
 
 function App() {
   return (
@@ -12,6 +14,12 @@ function App() {
         </Route>
         <Route exact path="/posts">
           <Posts />
+        </Route>
+        <Route path="/albums/:albumId">
+          <Album />
+        </Route>
+        <Route path="/albums">
+          <Albums />
         </Route>
         <Route path="/">
           <Posts />
