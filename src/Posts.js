@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getPosts } from "./api";
-import Post from "./Post";
 
 const Posts = () => {
   let [postResult, setPostResult] = useState({
@@ -28,14 +28,22 @@ function renderPostResult(postResult) {
     case "loading":
       return <p>Loading...</p>;
     case "loaded":
-      return postResult.data.map((post) => (
-        <Post key={post.id} title={post.title} body={post.body} />
-      ));
+      return renderPosts(postResult.data);
     case "errored":
       return <p>Error: {postResult.error.message}</p>;
     default:
       return <p>Something went wrong</p>;
   }
+}
+
+function renderPosts(posts) {
+  return posts.map((post) => (
+    <div key={post.id}>
+      <Link to={{ pathname: `/posts/${post.id}`, state: post }}>
+        {post.title}
+      </Link>
+    </div>
+  ));
 }
 
 export default Posts;
