@@ -1,61 +1,49 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getPost, getCommentsForPost } from "./api";
+import Loader from "./Loader";
 
 const Post = () => {
-  let { postId } = useParams();
-  let [postResult, setPostResult] = useState({
-    status: "loading",
-  });
-  let [commentResult, setCommentResult] = useState({
-    status: "loading",
-  });
-
-  useEffect(() => {
-    getPost(postId)
-      .then((response) => response.json())
-      .then((data) => setPostResult({ status: "loaded", data }))
-      .catch((error) => setPostResult({ status: "errored", error }));
-
-    getCommentsForPost(postId)
-      .then((response) => response.json())
-      .then((data) => setCommentResult({ status: "loaded", data }))
-      .catch((error) => setCommentResult({ status: "errored", error }));
-  }, [postId]);
+  const { postId } = useParams();
+  const [postResult, setPostResult] = useState({ status: "loading" });
+  const [commentResult, setCommentResult] = useState({ status: "loading" });
+  const memoizedGetPost = useCallback(() => getPost(postId), [postId]);
+  const memoizedRenderPost = useCallback(() => renderPost(postResult.data), [
+    postResult.data,
+  ]);
+  const memoizedGetComments = useCallback(() => getCommentsForPost(postId), [
+    postId,
+  ]);
+  const memoizedRenderComments = useCallback(
+    () => renderComments(commentResult.data),
+    [commentResult.data]
+  );
 
   return (
     <>
-      {renderPost(postResult)}
-      {renderCommentsResult(commentResult)}
+      <Loader
+        result={postResult}
+        setResults={setPostResult}
+        fetchMethod={memoizedGetPost}
+        renderMethod={memoizedRenderPost}
+      />
+      <Loader
+        result={commentResult}
+        setResults={setCommentResult}
+        fetchMethod={memoizedGetComments}
+        renderMethod={memoizedRenderComments}
+      />
     </>
   );
 };
 
-function renderPost(postResult) {
-  switch (postResult.status) {
-    case "loading":
-      return <p>Loading...</p>;
-    case "loaded":
-      return (
-        <>
-          <h1>{postResult.data.title}</h1>
-          <p>{postResult.data.body}</p>
-        </>
-      );
-    default:
-      return <p>Something went wrong...</p>;
-  }
-}
-
-function renderCommentsResult(commentResult) {
-  switch (commentResult.status) {
-    case "loading":
-      return <p>Loading...</p>;
-    case "loaded":
-      return renderComments(commentResult.data);
-    default:
-      return <p>Something went wrong...</p>;
-  }
+function renderPost(post) {
+  return (
+    <>
+      <h1>{post.title}</h1>
+      <p>{post.body}</p>
+    </>
+  );
 }
 
 function renderComments(comments) {

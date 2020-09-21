@@ -1,27 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { getAlbums } from "./api";
 import { Link } from "react-router-dom";
+import Loader from "./Loader";
 
 const Albums = () => {
   const [albumResult, setAlbumResult] = useState({ status: "loading" });
+  const memoizedRenderAlbums = useCallback(
+    () => renderAlbums(albumResult.data),
+    [albumResult.data]
+  );
 
-  useEffect(() => {
-    getAlbums()
-      .then((response) => response.json())
-      .then((data) => setAlbumResult({ status: "loaded", data }))
-      .catch((error) => setAlbumResult({ status: "errored", error }));
-  }, []);
-
-  switch (albumResult.status) {
-    case "loading":
-      return <p>Loading...</p>;
-    case "loaded":
-      return renderAlbums(albumResult.data);
-    case "errored":
-      return <p>Error: {albumResult.error.message}</p>;
-    default:
-      return <p>Something went wrong</p>;
-  }
+  return (
+    <Loader
+      result={albumResult}
+      setResults={setAlbumResult}
+      fetchMethod={getAlbums}
+      renderMethod={memoizedRenderAlbums}
+    />
+  );
 };
 
 function renderAlbums(albums) {
