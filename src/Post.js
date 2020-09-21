@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getPost, getComments } from "./api";
+import { getPost, getCommentsForPost } from "./api";
 
 const Post = () => {
   let { postId } = useParams();
@@ -17,7 +17,7 @@ const Post = () => {
       .then((data) => setPostResult({ status: "loaded", data }))
       .catch((error) => setPostResult({ status: "errored", error }));
 
-    getComments()
+    getCommentsForPost(postId)
       .then((response) => response.json())
       .then((data) => setCommentResult({ status: "loaded", data }))
       .catch((error) => setCommentResult({ status: "errored", error }));
@@ -26,7 +26,7 @@ const Post = () => {
   return (
     <>
       {renderPost(postResult)}
-      {renderCommentsResult(Number.parseInt(postId), commentResult)}
+      {renderCommentsResult(commentResult)}
     </>
   );
 };
@@ -47,29 +47,26 @@ function renderPost(postResult) {
   }
 }
 
-function renderCommentsResult(postId, commentResult) {
+function renderCommentsResult(commentResult) {
   switch (commentResult.status) {
     case "loading":
       return <p>Loading...</p>;
     case "loaded":
-      return renderComments(postId, commentResult.data);
+      return renderComments(commentResult.data);
     default:
       return <p>Something went wrong...</p>;
   }
 }
 
-function renderComments(postId, comments) {
-  console.log(postId);
-  return comments
-    .filter((comment) => comment.postId === postId)
-    .map((comment) => (
-      <>
-        <hr />
-        <p>Name: {comment.name}</p>
-        <p>Email: {comment.email}</p>
-        <p>Body: {comment.body}</p>
-      </>
-    ));
+function renderComments(comments) {
+  return comments.map((comment) => (
+    <>
+      <hr />
+      <p>Name: {comment.name}</p>
+      <p>Email: {comment.email}</p>
+      <p>Body: {comment.body}</p>
+    </>
+  ));
 }
 
 export default Post;

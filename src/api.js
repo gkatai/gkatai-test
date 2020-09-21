@@ -6,8 +6,10 @@ export function getPost(id) {
   return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
 }
 
-export function getComments() {
-  return fetch("https://jsonplaceholder.typicode.com/comments");
+export function getCommentsForPost(postId) {
+  return fetch(
+    `https://jsonplaceholder.typicode.com/comments?postId=${postId}`
+  );
 }
 
 export function getAlbums() {
