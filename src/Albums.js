@@ -11,12 +11,15 @@ const Albums = () => {
   );
 
   return (
-    <Loader
-      result={albumResult}
-      setResults={setAlbumResult}
-      fetchMethod={getAlbums}
-      renderMethod={memoizedRenderAlbums}
-    />
+    <>
+      <h1>Albums</h1>
+      <Loader
+        result={albumResult}
+        setResults={setAlbumResult}
+        fetchMethod={getAlbums}
+        renderMethod={memoizedRenderAlbums}
+      />
+    </>
   );
 };
 

@@ -27,9 +27,7 @@ const Posts = () => {
 function renderPosts(posts) {
   return posts.map((post) => (
     <div key={post.id}>
-      <Link to={{ pathname: `/posts/${post.id}`, state: post }}>
-        {post.title}
-      </Link>
+      <Link to={`/posts/${post.id}`}>{post.title}</Link>
     </div>
   ));
 }
